@@ -5,12 +5,14 @@ const contenedorCarritoProductos = document.querySelector("#carrito-productos")
 const contenedorCarritoAcciones = document.querySelector("#carrito-acciones")
 const contenedorCarritoComprado = document.querySelector("#carrito-comprado")
 let botonesDeEliminar = document.querySelectorAll(".carrito-producto-eliminar")
-const botonDeVaciar = document.querySelector("#carrito-acciones-eliminar")
+const botonDeVaciar = document.querySelector("#carrito-acciones-vaciar")
+const sumaTotal = document.querySelector("#total")
+const btnComprar = document.querySelector(".carrito-acciones-comprar")
 
 function cargarProductosCarrito() {
 
-    if (productosEnCarrito && productosEnCarrito.length>0) {
-        
+    if (productosEnCarrito && productosEnCarrito.length > 0) {
+
         contenedorCarritoVacio.classList.add("disabled")
         contenedorCarritoProductos.classList.remove("disabled")
         contenedorCarritoAcciones.classList.remove("disabled")
@@ -48,6 +50,7 @@ function cargarProductosCarrito() {
         contenedorCarritoComprado.classList.add("disabled")
     }
     actualizarBotonesEliminar()
+    elTotal()
 }
 cargarProductosCarrito()
 
@@ -59,20 +62,36 @@ function actualizarBotonesEliminar() {
     })
 }
 
-function eliminarDelCarrito(e){
+function eliminarDelCarrito(e) {
     const idBoton = e.currentTarget.id;
-    const index = productosEnCarrito.findIndex(producto=> producto.id === idBoton)
-    productosEnCarrito.splice(index,1)
+    const index = productosEnCarrito.findIndex(producto => producto.id === idBoton)
+    productosEnCarrito.splice(index, 1)
     cargarProductosCarrito()
     localStorage.setItem("productos-en-carrito", JSON.stringify(productosEnCarrito))
-    
+
 }
 
 botonDeVaciar.addEventListener("click", vaciarCarrito);
 
-function vaciarCarrito(){
-    productosEnCarrito.lenght = 0;
+function vaciarCarrito() {
+    productosEnCarrito.length = 0;
     localStorage.setItem("productos-en-carrito", JSON.stringify(productosEnCarrito))
     cargarProductosCarrito();
 }
 
+
+function elTotal() {
+    const contenedorTotal = productosEnCarrito.reduce((acumulador, productos) => (productos.precio * productos.cantidad), 0)
+    total.innerText = `$${contenedorTotal}`
+}
+
+btnComprar.addEventListener("click", comprarCarrito)
+function comprarCarrito (){
+        productosEnCarrito.length = 0;
+        localStorage.setItem("productos-en-carrito", JSON.stringify(productosEnCarrito))
+        contenedorCarritoVacio.classList.add("disabled")
+        contenedorCarritoProductos.classList.add("disabled")
+        contenedorCarritoAcciones.classList.add("disabled")
+        contenedorCarritoComprado.classList.remove("disabled")
+
+}
